@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ENG-492: CRRC CDA5B1 (QSY) Series Hybrid LTO Locomotive - Interactive Infographic</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes dash {
+      to {
+        stroke-dashoffset: -40;
+      }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(0, 168, 150, 0.6)); }
+      50% { filter: drop-shadow(0 0 16px rgba(0, 168, 150, 0.9)); }
+    }
+    .flow-active {
+      stroke-dasharray: 8 6;
+      animation: dash 1s linear infinite;
+    }
+    .flow-reverse {
+      stroke-dasharray: 8 6;
+      animation: dash 1s linear infinite reverse;
+    }
+    .glow-cyan {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.6); }
+  </style>
+</head>
+<body class="bg-[var(--background,#f8fafc)] text-[var(--foreground,#0f172a)] antialiased p-3 sm:p-5 font-sans min-h-screen">
+
+  <div class="max-w-7xl mx-auto space-y-5">
+
+    <!-- HEADER & TITLE -->
+    <header class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-5 shadow-sm">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+            <span class="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider rounded-md bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20">
+              ENG-492 Sustainable Energy
+            </span>
+            <span class="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+              Thai-Nichi Institute of Technology (TNI)
+            </span>
+            <span class="px-2.5 py-0.5 text-xs font-semibold rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              U20 Axle Load Standard
+            </span>
+          </div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--foreground,#0f2c59)]">
+            อินโฟกราฟิกจำลองการทำงานระบบ Series Hybrid หัวรถจักร QSY (CRRC CDA5B1)
+          </h1>
+          <p class="text-sm text-[var(--muted-foreground,#64748b)] mt-1">
+            แผนภาพพลศาสตร์พลังงานแบบมีปฏิสัมพันธ์ (Interactive Powertrain & Energy Flow Simulator) คำนวณแบบ Real-time ตามสมการจริง
+          </p>
+        </div>
+
+        <!-- QUICK PRESET BUTTONS -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-xs font-semibold text-[var(--muted-foreground,#64748b)]">สถานการณ์จำลอง:</span>
+          <button onclick="applyPreset('base')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-teal-600 text-white hover:bg-teal-700 transition shadow-sm">
+            มาตรฐาน 555 ตัน (55 km/h)
+          </button>
+          <button onclick="applyPreset('cargo')" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-[var(--card,#ffffff)] border border-[var(--border,#cbd5e1)] hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+            ขบวนสินค้าหนัก 656 ตัน
+          </button>
+          <button onclick="applyPreset('shunting')" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-[var(--card,#ffffff)] border border-[var(--border,#cbd5e1)] hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+            สับเปลี่ยนย่าน 106 ตัน
+          </button>
+          <button onclick="applyPreset('highspeed')" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-[var(--card,#ffffff)] border border-[var(--border,#cbd5e1)] hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+            ทางราบเร็ว 90 km/h
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 4 OPERATING MODES SELECTOR TABS -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <button id="btn-mode-1" onclick="setMode(1)" class="p-3.5 rounded-xl border text-left transition flex flex-col justify-between bg-teal-500/10 border-teal-500 shadow-sm ring-2 ring-teal-500/30">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-teal-600 dark:text-teal-400">โหมดที่ 1</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-teal-500 text-white font-semibold">กู้คืนไฟ</span>
+        </div>
+        <div class="font-bold text-sm text-[var(--foreground,#0f172a)] mt-1.5">Regenerative Braking</div>
+        <div class="text-xs text-[var(--muted-foreground,#64748b)] mt-1">เบรกเข้าสถานี / หน่วงลงเขา ชาร์จเข้า LTO สูงสุด 2,000 kW</div>
+      </button>
+
+      <button id="btn-mode-2" onclick="setMode(2)" class="p-3.5 rounded-xl border border-[var(--border,#e2e8f0)] text-left transition flex flex-col justify-between bg-[var(--card,#ffffff)] hover:bg-slate-50 dark:hover:bg-slate-800">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-amber-600 dark:text-amber-400">โหมดที่ 2</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-amber-500 text-white font-semibold">บูสต์ 2.4 MW</span>
+        </div>
+        <div class="font-bold text-sm text-[var(--foreground,#0f172a)] mt-1.5">Hybrid Heavy Boost</div>
+        <div class="text-xs text-[var(--muted-foreground,#64748b)] mt-1">ออกตัว 0-55 km/h / ไต่เขา (ดีเซล 2,000 kW + แบตเตอรี่ 400 kW)</div>
+      </button>
+
+      <button id="btn-mode-3" onclick="setMode(3)" class="p-3.5 rounded-xl border border-[var(--border,#e2e8f0)] text-left transition flex flex-col justify-between bg-[var(--card,#ffffff)] hover:bg-slate-50 dark:hover:bg-slate-800">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-blue-600 dark:text-blue-400">โหมดที่ 3</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-blue-500 text-white font-semibold">Sweet Spot</span>
+        </div>
+        <div class="font-bold text-sm text-[var(--foreground,#0f172a)] mt-1.5">Cruising Mode</div>
+        <div class="text-xs text-[var(--muted-foreground,#64748b)] mt-1">ทางราบความเร็วคงที่ เดินเครื่องที่ BSFC ต่ำสุด เล็มชาร์จคุม SOC 20-80%</div>
+      </button>
+
+      <button id="btn-mode-4" onclick="setMode(4)" class="p-3.5 rounded-xl border border-[var(--border,#e2e8f0)] text-left transition flex flex-col justify-between bg-[var(--card,#ffffff)] hover:bg-slate-50 dark:hover:bg-slate-800">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">โหมดที่ 4</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500 text-white font-semibold">Zero Emission</span>
+        </div>
+        <div class="font-bold text-sm text-[var(--foreground,#0f172a)] mt-1.5">Pure Electric Shunting</div>
+        <div class="text-xs text-[var(--muted-foreground,#64748b)] mt-1">ดับเครื่องดีเซล 100% สับเปลี่ยนในสถานีกลางฯ ไร้ควัน ไร้เสียง > 3.5 ชม.</div>
+      </button>
+    </div>
+
+    <!-- MAIN INTERACTIVE WORKSPACE: SVG DIAGRAM + CONTROLS -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+      <!-- LEFT: INTERACTIVE CONTROLS (4 COLS) -->
+      <div class="lg:col-span-4 space-y-4">
+        <div class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-5 shadow-sm space-y-4">
+          <div class="flex items-center justify-between border-b border-[var(--border,#e2e8f0)] pb-3">
+            <h2 class="font-bold text-base text-[var(--foreground,#0f172a)] flex items-center gap-2">
+              <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+              แผงปรับแต่งพารามิเตอร์ (Sliders)
+            </h2>
+            <button onclick="applyPreset('base')" class="text-xs text-teal-600 hover:underline font-semibold">รีเซ็ตค่า</button>
+          </div>
+
+          <!-- SLIDER 1: Mass -->
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span>มวลขบวนรถรวม (Mass):</span>
+              <span class="text-teal-600 font-bold" id="val-mass">555 ตัน</span>
+            </div>
+            <input type="range" id="input-mass" min="106" max="656" step="1" value="555" oninput="updateAll()" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-teal-600">
+            <div class="flex justify-between text-[11px] text-[var(--muted-foreground,#94a3b8)] mt-0.5">
+              <span>106 ตัน (หัวเดี่ยว)</span>
+              <span>555 ตัน (เฉลี่ย)</span>
+              <span>656 ตัน (เต็มพิกัด)</span>
+            </div>
+          </div>
+
+          <!-- SLIDER 2: Speed -->
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span>ความเร็วเดินรถ (Speed):</span>
+              <span class="text-blue-600 font-bold" id="val-speed">55.0 km/h (15.28 m/s)</span>
+            </div>
+            <input type="range" id="input-speed" min="10" max="120" step="1" value="55" oninput="updateAll()" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600">
+            <div class="flex justify-between text-[11px] text-[var(--muted-foreground,#94a3b8)] mt-0.5">
+              <span>30 km/h (ย่าน)</span>
+              <span>55 km/h (สายเหนือจริง)</span>
+              <span>120 km/h (สูงสุด)</span>
+            </div>
+          </div>
+
+          <!-- SLIDER 3: Battery SOC -->
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span>สถานะประจุแบตเตอรี่ (SOC):</span>
+              <span class="text-emerald-600 font-bold" id="val-soc">60 % (240 kWh)</span>
+            </div>
+            <input type="range" id="input-soc" min="20" max="80" step="1" value="60" oninput="updateAll()" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+            <div class="flex justify-between text-[11px] text-[var(--muted-foreground,#94a3b8)] mt-0.5">
+              <span>20% (Cut-off)</span>
+              <span>60% (กลาง)</span>
+              <span>80% (เพดานชาร์จ)</span>
+            </div>
+          </div>
+
+          <!-- SLIDER 4: Diesel Price -->
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span>ราคาน้ำมันดีเซล B7:</span>
+              <span class="text-amber-600 font-bold" id="val-fuelprice">32.00 บาท/ลิตร</span>
+            </div>
+            <input type="range" id="input-fuelprice" min="26" max="40" step="0.5" value="32.0" oninput="updateAll()" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-600">
+            <div class="flex justify-between text-[11px] text-[var(--muted-foreground,#94a3b8)] mt-0.5">
+              <span>26.0 บาท</span>
+              <span>32.0 บาท (ปัจจุบัน)</span>
+              <span>40.0 บาท</span>
+            </div>
+          </div>
+
+          <!-- SLIDER 5: Annual Trips & Fleet -->
+          <div class="pt-2 border-t border-[var(--border,#e2e8f0)] space-y-3">
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span>จำนวนเที่ยวต่อปี (Trips/Year):</span>
+                <span class="text-indigo-600 font-bold" id="val-trips">300 เที่ยว/ปี</span>
+              </div>
+              <input type="range" id="input-trips" min="150" max="365" step="5" value="300" oninput="updateAll()" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+            </div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold">จำนวนหัวรถจักรในฝูง (Fleet Size):</span>
+              <div class="flex items-center gap-1.5">
+                <button onclick="setFleet(1)" id="btn-fleet-1" class="px-2.5 py-1 text-xs font-bold rounded bg-teal-600 text-white">1 คัน</button>
+                <button onclick="setFleet(50)" id="btn-fleet-50" class="px-2.5 py-1 text-xs font-medium rounded bg-slate-100 dark:bg-slate-800 text-[var(--foreground,#0f172a)] hover:bg-slate-200">50 คัน (ทั้งฝูง)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK REAL-TIME STAT MINI-BOX -->
+        <div class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-4 shadow-sm space-y-2">
+          <div class="text-xs font-bold text-[var(--muted-foreground,#64748b)] uppercase tracking-wider">แรงต้านทานการเคลื่อนที่ (Davis Equation)</div>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+              <span class="text-[var(--muted-foreground,#64748b)] block">แรงต้านราง (F_roll):</span>
+              <span class="font-bold text-sm text-[var(--foreground,#0f172a)]" id="disp-froll">10,889.1 N</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+              <span class="text-[var(--muted-foreground,#64748b)] block">แรงต้านลม (F_aero):</span>
+              <span class="font-bold text-sm text-[var(--foreground,#0f172a)]" id="disp-faero">843.8 N</span>
+            </div>
+          </div>
+          <div class="text-xs text-[var(--muted-foreground,#64748b)] flex justify-between pt-1">
+            <span>แรงต้านรวม (Total Drag):</span>
+            <span class="font-bold text-teal-600" id="disp-fres">11,732.9 N (11.73 kN)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: ANIMATED ENERGY FLOW DIAGRAM (8 COLS) -->
+      <div class="lg:col-span-8 flex flex-col space-y-4">
+        <div class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-5 shadow-sm flex-1 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h2 class="font-bold text-base text-[var(--foreground,#0f172a)] flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-teal-500 animate-ping"></span>
+                แผนภาพสถาปัตยกรรมและการไหลของพลังงาน (Interactive Powertrain Architecture)
+              </h2>
+              <p class="text-xs text-[var(--muted-foreground,#64748b)]" id="diagram-desc">
+                โหมด 1: กระแสไฟฟ้าเบรกไหลจากมอเตอร์ผ่าน Inverter เข้า Main DC Bus และชาร์จเข้าสู่ LTO Battery ผ่าน Bi-directional Converter
+              </p>
+            </div>
+            <div class="text-right">
+              <span class="text-xs px-2.5 py-1 rounded-full font-bold" id="badge-mode-status">
+                กำลังไฟฟ้าเบรก: 777.4 kW
+              </span>
+            </div>
+          </div>
+
+          <!-- SVG ARCHITECTURE SCHEMATIC -->
+          <div class="w-full overflow-x-auto py-2">
+            <svg viewBox="0 0 760 380" class="w-full h-auto min-w-[650px] select-none">
+              <defs>
+                <!-- Gradients -->
+                <linearGradient id="grad-genset" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#f59e0b"/>
+                  <stop offset="100%" stop-color="#d97706"/>
+                </linearGradient>
+                <linearGradient id="grad-bus" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ef4444"/>
+                  <stop offset="100%" stop-color="#b91c1c"/>
+                </linearGradient>
+                <linearGradient id="grad-lto" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#00A896"/>
+                  <stop offset="100%" stop-color="#028074"/>
+                </linearGradient>
+                <linearGradient id="grad-conv" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#3b82f6"/>
+                  <stop offset="100%" stop-color="#1d4ed8"/>
+                </linearGradient>
+                <linearGradient id="grad-motor" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#0f2c59"/>
+                  <stop offset="100%" stop-color="#1e3a8a"/>
+                </linearGradient>
+                <!-- Markers -->
+                <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981"/>
+                </marker>
+                <marker id="arrow-orange" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
+                </marker>
+                <marker id="arrow-cyan" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#00A896"/>
+                </marker>
+              </defs>
+
+              <!-- BACKGROUND LOCOMOTIVE CHASSIS OUTLINE -->
+              <rect x="15" y="15" width="730" height="350" rx="16" fill="rgba(241, 245, 249, 0.5)" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6 4"/>
+              <text x="35" y="42" font-size="12" font-weight="bold" fill="#64748b">โครงตัวรถจักร CRRC CDA5B1 (QSY) — พิกัดน้ำหนักกดเพลา U20 (20 ตัน/เพลา รวม 106.0 ตัน)</text>
+
+              <!-- MAIN DC BUS (HORIZONTAL HIGHWAY) -->
+              <rect id="node-dcbus" x="180" y="70" width="400" height="42" rx="8" fill="url(#grad-bus)" filter="drop-shadow(0 2px 4px rgba(239, 68, 68, 0.3))"/>
+              <text x="380" y="96" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Main DC Bus 1,400 V DC (เพดานกำลังรวม 2,400 kW)</text>
+
+              <!-- COMPONENT 1: DIESEL GENSET -->
+              <g id="comp-genset" transform="translate(40, 150)">
+                <rect width="160" height="95" rx="10" fill="url(#grad-genset)" stroke="#b45309" stroke-width="2"/>
+                <text x="80" y="28" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">1. MTU Diesel Genset</text>
+                <text x="80" y="48" font-size="11" fill="#fef3c7" text-anchor="middle">1,400 – 2,000 kW PM Alt</text>
+                <rect x="15" y="60" width="130" height="22" rx="4" fill="rgba(0,0,0,0.2)"/>
+                <text x="80" y="75" font-size="10.5" font-weight="bold" fill="#ffffff" text-anchor="middle" id="svg-genset-status">ดีเซล: STANDBY (0 kW)</text>
+              </g>
+
+              <!-- COMPONENT 2: LTO BATTERY PACK -->
+              <g id="comp-lto" transform="translate(40, 265)">
+                <rect width="160" height="90" rx="10" fill="url(#grad-lto)" stroke="#0f766e" stroke-width="2" class="glow-cyan"/>
+                <text x="80" y="24" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">2. LTO Battery Pack</text>
+                <text x="80" y="42" font-size="11" fill="#ccfbf1" text-anchor="middle">400 kWh (1,000 V DC)</text>
+                <rect x="15" y="52" width="130" height="24" rx="4" fill="rgba(0,0,0,0.25)"/>
+                <text x="80" y="68" font-size="11" font-weight="bold" fill="#5eead4" text-anchor="middle" id="svg-lto-status">SOC: 60% (240 kWh)</text>
+              </g>
+
+              <!-- COMPONENT 3: BI-DIRECTIONAL DC-DC CONVERTER -->
+              <g id="comp-conv" transform="translate(265, 230)">
+                <rect width="170" height="90" rx="10" fill="url(#grad-conv)" stroke="#1e40af" stroke-width="2"/>
+                <text x="85" y="25" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">3. Bi-directional Converter</text>
+                <text x="85" y="45" font-size="11" fill="#dbeafe" text-anchor="middle">พิกัด 2,000 kW Peak (SiC)</text>
+                <rect x="15" y="55" width="140" height="24" rx="4" fill="rgba(0,0,0,0.25)"/>
+                <text x="85" y="71" font-size="11" font-weight="bold" fill="#93c5fd" text-anchor="middle" id="svg-conv-status">กำลังชาร์จ: 777 kW</text>
+              </g>
+
+              <!-- COMPONENT 4: TRACTION INVERTERS & MOTORS -->
+              <g id="comp-motor" transform="translate(520, 160)">
+                <rect width="190" height="150" rx="10" fill="url(#grad-motor)" stroke="#1e293b" stroke-width="2"/>
+                <text x="95" y="28" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">4. Traction System</text>
+                <text x="95" y="48" font-size="11" fill="#93c5fd" text-anchor="middle">Inverters + 6 AC Motors</text>
+                
+                <!-- BOGIE WHEELS (CO-CO) -->
+                <g transform="translate(20, 65)">
+                  <circle cx="20" cy="20" r="14" fill="#64748b" stroke="#ffffff" stroke-width="2"/>
+                  <circle cx="75" cy="20" r="14" fill="#64748b" stroke="#ffffff" stroke-width="2"/>
+                  <circle cx="130" cy="20" r="14" fill="#64748b" stroke="#ffffff" stroke-width="2"/>
+                  <text x="75" y="52" font-size="10" fill="#cbd5e1" text-anchor="middle">แคร่ล้อ Co-Co (6 เพลา)</text>
+                </g>
+                <rect x="15" y="118" width="160" height="22" rx="4" fill="rgba(0,0,0,0.3)"/>
+                <text x="95" y="133" font-size="10.5" font-weight="bold" fill="#38bdf8" text-anchor="middle" id="svg-motor-status">เบรกปั่นไฟ: 777.4 kW</text>
+              </g>
+
+              <!-- COMPONENT 5: DYNAMIC RESISTOR GRID (ON ROOF) -->
+              <g id="comp-grid" transform="translate(460, 28)">
+                <rect width="150" height="30" rx="5" fill="#475569" stroke="#334155" stroke-width="1.5"/>
+                <text x="75" y="20" font-size="10" font-weight="bold" fill="#cbd5e1" text-anchor="middle">Braking Resistor: 0 kW</text>
+              </g>
+
+              <!-- DYNAMIC ENERGY FLOW PIPES & PATHS -->
+              <!-- PATH A: Genset -> DC Bus -->
+              <path id="flow-genset-bus" d="M 120 150 L 120 91 L 180 91" fill="none" stroke="#f59e0b" stroke-width="4" stroke-linecap="round"/>
+              
+              <!-- PATH B: LTO Battery <-> Converter -->
+              <path id="flow-lto-conv" d="M 200 300 L 265 300" fill="none" stroke="#00A896" stroke-width="5" stroke-linecap="round"/>
+              
+              <!-- PATH C: Converter <-> DC Bus -->
+              <path id="flow-conv-bus" d="M 350 230 L 350 112" fill="none" stroke="#3b82f6" stroke-width="5" stroke-linecap="round"/>
+
+              <!-- PATH D: DC Bus <-> Traction Inverters -->
+              <path id="flow-bus-motor" d="M 580 91 L 615 91 L 615 160" fill="none" stroke="#00A896" stroke-width="5" stroke-linecap="round"/>
+
+              <!-- PATH E: DC Bus -> Resistor Grid -->
+              <path id="flow-bus-grid" d="M 535 70 L 535 58" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="3 3"/>
+            </svg>
+          </div>
+
+          <!-- DYNAMIC POWER SUMMARIES BAR -->
+          <div class="grid grid-cols-3 gap-2 pt-3 border-t border-[var(--border,#e2e8f0)] text-center text-xs">
+            <div class="p-2 rounded-lg bg-teal-500/10">
+              <span class="text-[var(--muted-foreground,#64748b)] block text-[11px]">พลังงานเบรกสุทธิต่อครั้ง:</span>
+              <span class="font-bold text-sm text-teal-600 dark:text-teal-400" id="disp-ebrake-stop">13.52 kWh</span>
+            </div>
+            <div class="p-2 rounded-lg bg-blue-500/10">
+              <span class="text-[var(--muted-foreground,#64748b)] block text-[11px]">กู้คืนสุทธิต่อเที่ยว 751 กม.:</span>
+              <span class="font-bold text-sm text-blue-600 dark:text-blue-400" id="disp-enet-trip">843.50 kWh</span>
+            </div>
+            <div class="p-2 rounded-lg bg-emerald-500/10">
+              <span class="text-[var(--muted-foreground,#64748b)] block text-[11px]">ระยะทางวิ่ง Pure Electric:</span>
+              <span class="font-bold text-sm text-emerald-600 dark:text-emerald-400" id="disp-range">58.42 กม.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW: REAL-TIME CALCULATION CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+      <!-- CARD 1: KINEMATICS -->
+      <div class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-teal-600">จลนศาสตร์การเบรก</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-teal-100 text-teal-800 font-bold">1,000 m</span>
+          </div>
+          <div class="text-2xl font-black text-[var(--foreground,#0f172a)] mt-1" id="stat-tbraking">130.9 s</div>
+          <p class="text-xs text-[var(--muted-foreground,#64748b)]">เวลาเบรกจากความเร็วสู่จุดหยุดนิ่ง</p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-[var(--border,#e2e8f0)] text-xs space-y-1">
+          <div class="flex justify-between">
+            <span class="text-[var(--muted-foreground,#64748b)]">อัตราความหน่วง (a):</span>
+            <span class="font-bold text-[var(--foreground,#0f172a)]" id="stat-decel">-0.1167 m/s²</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[var(--muted-foreground,#64748b)]">พลังงานจลน์รวม (Ek):</span>
+            <span class="font-bold text-[var(--foreground,#0f172a)]" id="stat-ek">19.43 kWh (69.9 MJ)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: FUEL SAVINGS -->
+      <div class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-600">ประหยัดน้ำมันดีเซล</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold" id="stat-saving-pct">12.94%</span>
+          </div>
+          <div class="text-2xl font-black text-[var(--foreground,#0f172a)] mt-1" id="stat-fuelsaved">62,124 ลิตร</div>
+          <p class="text-xs text-[var(--muted-foreground,#64748b)]" id="stat-fuelsaved-sub">ต่อปีต่อคัน (207.1 ลิตร/เที่ยว)</p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-[var(--border,#e2e8f0)] text-xs space-y-1">
+          <div class="flex justify-between">
+            <span class="text-[var(--muted-foreground,#64748b)]">มูลค่าเงินประหยัด:</span>
+            <span class="font-bold text-emerald-600" id="stat-moneysaved">+1,987,968 บ./ปี</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[var(--muted-foreground,#64748b)]">อัตราสิ้นเปลือง (SFC):</span>
+            <span class="font-bold text-[var(--foreground,#0f172a)]">0.2455 L/kWh</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3: GHG CO2 REDUCTION -->
+      <div class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">ลดก๊าซเรือนกระจก</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">อบก. 2.68 kg/L</span>
+          </div>
+          <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1" id="stat-co2">166.49 ตัน</div>
+          <p class="text-xs text-[var(--muted-foreground,#64748b)]" id="stat-co2-sub">ตัน CO2e / ปี / คัน</p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-[var(--border,#e2e8f0)] text-xs space-y-1">
+          <div class="flex justify-between">
+            <span class="text-[var(--muted-foreground,#64748b)]">ขยายผลครบทั้ง 50 คัน:</span>
+            <span class="font-bold text-emerald-700 dark:text-emerald-300" id="stat-co2-fleet">8,324.5 ตัน/ปี</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[var(--muted-foreground,#64748b)]">เทียบเท่าปลูกต้นไม้:</span>
+            <span class="font-bold text-[var(--foreground,#0f172a)]" id="stat-trees">~870,000 ต้น</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 4: PAYBACK & BATTERY LIFE -->
+      <div class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-600">ผลตอบแทนการลงทุน</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">LTO > 25,000 รอบ</span>
+          </div>
+          <div class="text-2xl font-black text-[var(--foreground,#0f172a)] mt-1" id="stat-payback">6.73 – 7.08 ปี</div>
+          <p class="text-xs text-[var(--muted-foreground,#64748b)]">ระยะเวลาคืนทุนอย่างง่าย (Payback)</p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-[var(--border,#e2e8f0)] text-xs space-y-1">
+          <div class="flex justify-between">
+            <span class="text-[var(--muted-foreground,#64748b)]">กระแสเงินสดสุทธิ (CFt):</span>
+            <span class="font-bold text-teal-600" id="stat-cft">+2,237,968 บ./ปี</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[var(--muted-foreground,#64748b)]">อายุการใช้งานแบตเตอรี่:</span>
+            <span class="font-bold text-emerald-600">39.5 ปี (Re-CAPEX = 0)</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER / ENGINEERING SPECIFICATION BADGES -->
+    <footer class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-4 shadow-sm text-xs text-[var(--muted-foreground,#64748b)] flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div>
+        <strong>สมมติฐานหลัก:</strong> เส้นทางกรุงเทพ–เชียงใหม่ 751 กม. | จุดเบรก 30 สถานี | ทางลาดชันภูเขา Δh = 400 m | ภาระแบกแบตเตอรี่ 3.8 ตัน (15.55 kWh) | มาตรฐานทางคู่ U20
+      </div>
+      <div class="flex items-center gap-2 font-semibold">
+        <span class="text-teal-600">● 100% Regenerative Stored</span>
+        <span class="text-emerald-600">● Net Positive EROI: 54.2x</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- INTERACTIVE LOGIC JAVASCRIPT -->
+  <script>
+    // State variables
+    let currentMode = 1;
+    let fleetSize = 1;
+
+    // Fixed Engineering Constants
+    const G = 9.81;
+    const CRR = 0.0020;
+    const RHO_AIR = 1.205;
+    const CD = 0.60;
+    const AREA = 10.0;
+    const ETA_GEN = 0.92;
+    const ETA_ELEC = 0.95;
+    const ETA_BATT = 0.95;
+    const ETA_TOTAL = ETA_GEN * ETA_ELEC * ETA_BATT; // 0.8303
+    const ETA_DRIVE = ETA_ELEC * ETA_GEN; // 0.874
+    const BSFC = 205; // g/kWh
+    const RHO_DIESEL = 835; // g/L
+    const SFC = BSFC / RHO_DIESEL; // 0.245509 L/kWh
+    const EMISSION_FACTOR = 2.68; // kg CO2e / L
+    const ROUTE_DIST = 751000; // m
+    const BRAKE_DIST = 1000; // m
+    const BATTERY_MASS = 3800; // kg
+    const CAPEX_BASE = 15070000; // THB
+    const CAPEX_RESERVE = 15840000; // THB
+    const BRAKE_MAINT_SAVING = 400000; // THB/yr
+    const OPEX_EXTRA = 150000; // THB/yr
+
+    function setMode(modeNum) {
+      currentMode = modeNum;
+      
+      // Update Tab Styles
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById('btn-mode-' + i);
+        if (i === modeNum) {
+          btn.className = "p-3.5 rounded-xl border text-left transition flex flex-col justify-between bg-teal-500/10 border-teal-500 shadow-sm ring-2 ring-teal-500/30";
+        } else {
+          btn.className = "p-3.5 rounded-xl border border-[var(--border,#e2e8f0)] text-left transition flex flex-col justify-between bg-[var(--card,#ffffff)] hover:bg-slate-50 dark:hover:bg-slate-800";
+        }
+      }
+
+      updateAll();
+    }
+
+    function setFleet(size) {
+      fleetSize = size;
+      const b1 = document.getElementById('btn-fleet-1');
+      const b50 = document.getElementById('btn-fleet-50');
+      if (size === 1) {
+        b1.className = "px-2.5 py-1 text-xs font-bold rounded bg-teal-600 text-white";
+        b50.className = "px-2.5 py-1 text-xs font-medium rounded bg-slate-100 dark:bg-slate-800 text-[var(--foreground,#0f172a)] hover:bg-slate-200";
+      } else {
+        b50.className = "px-2.5 py-1 text-xs font-bold rounded bg-teal-600 text-white";
+        b1.className = "px-2.5 py-1 text-xs font-medium rounded bg-slate-100 dark:bg-slate-800 text-[var(--foreground,#0f172a)] hover:bg-slate-200";
+      }
+      updateAll();
+    }
+
+    function applyPreset(name) {
+      const inputMass = document.getElementById('input-mass');
+      const inputSpeed = document.getElementById('input-speed');
+      const inputSoc = document.getElementById('input-soc');
+      const inputFuelPrice = document.getElementById('input-fuelprice');
+      const inputTrips = document.getElementById('input-trips');
+
+      if (name === 'base') {
+        inputMass.value = 555;
+        inputSpeed.value = 55;
+        inputSoc.value = 60;
+        inputFuelPrice.value = 32.0;
+        inputTrips.value = 300;
+        setMode(1);
+      } else if (name === 'cargo') {
+        inputMass.value = 656;
+        inputSpeed.value = 55;
+        inputSoc.value = 60;
+        inputFuelPrice.value = 32.0;
+        inputTrips.value = 300;
+        setMode(2);
+      } else if (name === 'shunting') {
+        inputMass.value = 106;
+        inputSpeed.value = 30;
+        inputSoc.value = 60;
+        inputFuelPrice.value = 32.0;
+        inputTrips.value = 300;
+        setMode(4);
+      } else if (name === 'highspeed') {
+        inputMass.value = 555;
+        inputSpeed.value = 90;
+        inputSoc.value = 70;
+        inputFuelPrice.value = 32.0;
+        inputTrips.value = 300;
+        setMode(3);
+      }
+      updateAll();
+    }
+
+    function updateAll() {
+      // 1. Read Inputs
+      const massTons = parseFloat(document.getElementById('input-mass').value);
+      const massKg = massTons * 1000;
+      const speedKmh = parseFloat(document.getElementById('input-speed').value);
+      const speedMs = speedKmh / 3.6;
+      const socPct = parseFloat(document.getElementById('input-soc').value);
+      const fuelPrice = parseFloat(document.getElementById('input-fuelprice').value);
+      const tripsPerYear = parseFloat(document.getElementById('input-trips').value);
+
+      // Update Slider Value Texts
+      document.getElementById('val-mass').innerText = `${massTons} ตัน`;
+      document.getElementById('val-speed').innerText = `${speedKmh.toFixed(1)} km/h (${speedMs.toFixed(2)} m/s)`;
+      document.getElementById('val-soc').innerText = `${socPct}% (${(socPct * 4).toFixed(0)} kWh)`;
+      document.getElementById('val-fuelprice').innerText = `${fuelPrice.toFixed(2)} บาท/ลิตร`;
+      document.getElementById('val-trips').innerText = `${tripsPerYear} เที่ยว/ปี`;
+
+      // 2. Physics & Davis Equation Calculations
+      const fRoll = CRR * massKg * G; // N
+      const fAero = 0.5 * RHO_AIR * CD * AREA * Math.pow(speedMs, 2); // N
+      const fRes = fRoll + fAero; // N
+
+      document.getElementById('disp-froll').innerText = `${fRoll.toLocaleString('en-US', {maximumFractionDigits: 1})} N`;
+      document.getElementById('disp-faero').innerText = `${fAero.toLocaleString('en-US', {maximumFractionDigits: 1})} N`;
+      document.getElementById('disp-fres').innerText = `${fRes.toLocaleString('en-US', {maximumFractionDigits: 1})} N (${(fRes/1000).toFixed(2)} kN)`;
+
+      // 3. Braking Kinematics & Energy
+      const tBrake = (2 * BRAKE_DIST) / speedMs; // s
+      const aDecel = -speedMs / tBrake; // m/s^2
+      const rotFactor = 1.08;
+      const ekJoules = 0.5 * massKg * rotFactor * Math.pow(speedMs, 2); // J
+      const ekKwh = ekJoules / 3600000;
+      const ekMj = ekJoules / 1000000;
+
+      const wRollJoules = fRoll * BRAKE_DIST;
+      const wAeroJoules = (fAero / 2) * BRAKE_DIST; // approx avg force during linear decel
+      const wLossJoules = wRollJoules + wAeroJoules;
+      const eBrakeMechJoules = Math.max(0, ekJoules - wLossJoules);
+      const eBrakeMechKwh = eBrakeMechJoules / 3600000;
+
+      // Electrical Generated & Stored
+      const eStoredStopKwh = eBrakeMechKwh * ETA_TOTAL;
+      const pMechAvgKw = (eBrakeMechJoules / tBrake) / 1000;
+      const pElecAvgKw = pMechAvgKw * ETA_DRIVE;
+      const pElecPeakKw = pElecAvgKw * 2.0; // Peak power at initial speed
+
+      // 4. Mountain Descent & Parasitic Battery Carrying Penalty
+      const massMtn = massKg * (520 / 555);
+      const deltaEpJoules = massMtn * G * 400; // 400m drop
+      const eSlopeGrossKwh = deltaEpJoules / 3600000;
+      const eSlopeNetKwh = eSlopeGrossKwh * 0.80; // 80% recovery after track curves & losses
+
+      const fRollBatt = CRR * BATTERY_MASS * G; // 74.556 N
+      const eCarryKwh = (fRollBatt * ROUTE_DIST) / 3600000; // 15.55 kWh
+
+      // Trip Totals (30 stops + mountain - battery weight penalty)
+      const eGrossTripKwh = (eStoredStopKwh * 30) + eSlopeNetKwh;
+      const eNetTripKwh = Math.max(0, eGrossTripKwh - eCarryKwh);
+      const eNetYearLocoKwh = eNetTripKwh * tripsPerYear;
+
+      // Fuel Saved
+      const fuelSavedTripLiters = eNetTripKwh * SFC;
+      const fuelSavedYearLoco = eNetYearLocoKwh * SFC;
+      const fuelSavedTotal = fuelSavedYearLoco * fleetSize;
+      const moneySavedYearLoco = fuelSavedYearLoco * fuelPrice;
+      const moneySavedTotal = fuelSavedTotal * fuelPrice;
+
+      // Baseline fuel comparison (480,000 L/yr for standard passenger train)
+      const baseFuelUse = (massTons / 555) * 480000;
+      const savingPct = (fuelSavedYearLoco / baseFuelUse) * 100;
+
+      // Carbon Reduction
+      const co2TonsLoco = (fuelSavedYearLoco * EMISSION_FACTOR) / 1000;
+      const co2TonsFleet = (fuelSavedTotal * EMISSION_FACTOR) / 1000;
+      const treesPlanting = Math.round(co2TonsFleet * 105);
+
+      // 5. Pure Electric Range from Current SOC
+      const usableEnergyKwh = Math.max(0, (socPct - 20) / 100 * 400);
+      const eCruisePerKm = (fRes * 1000) / (3600000 * ETA_DRIVE); // kWh/km
+      const aAccel = 0.20; // m/s^2
+      const sAccelM = Math.pow(speedMs, 2) / (2 * aAccel);
+      const sAccelKm = sAccelM / 1000;
+      const eAccelKwh = (ekJoules + (fRes * sAccelM)) / (3600000 * ETA_DRIVE);
+      let rangeKm = sAccelKm + Math.max(0, (usableEnergyKwh - eAccelKwh) / eCruisePerKm);
+      if (massTons <= 110) {
+        // Yard Shunting 3x curve margin
+        rangeKm = rangeKm / 3.08;
+      }
+
+      // 6. Financial Payback
+      const netCashFlowYear = moneySavedYearLoco + BRAKE_MAINT_SAVING - OPEX_EXTRA;
+      const paybackBase = CAPEX_BASE / Math.max(1, netCashFlowYear);
+      const paybackReserve = CAPEX_RESERVE / Math.max(1, netCashFlowYear);
+
+      // Update Bottom Metric Cards
+      document.getElementById('stat-tbraking').innerText = `${tBrake.toFixed(1)} s`;
+      document.getElementById('stat-decel').innerText = `${aDecel.toFixed(4)} m/s²`;
+      document.getElementById('stat-ek').innerText = `${ekKwh.toFixed(2)} kWh (${ekMj.toFixed(1)} MJ)`;
+
+      document.getElementById('stat-fuelsaved').innerText = `${Math.round(fuelSavedTotal).toLocaleString('en-US')} ลิตร`;
+      document.getElementById('stat-fuelsaved-sub').innerText = fleetSize === 1 ? `ต่อปีต่อคัน (${fuelSavedTripLiters.toFixed(1)} ลิตร/เที่ยว)` : `ทั้งฝูง ${fleetSize} คัน (${(fuelSavedTotal/1000000).toFixed(2)} ล้านลิตร/ปี)`;
+      document.getElementById('stat-saving-pct').innerText = `${savingPct.toFixed(2)}%`;
+      document.getElementById('stat-moneysaved').innerText = `+${Math.round(moneySavedTotal).toLocaleString('en-US')} บ./ปี`;
+
+      document.getElementById('stat-co2').innerText = `${co2TonsFleet.toFixed(2)} ตัน`;
+      document.getElementById('stat-co2-sub').innerText = fleetSize === 1 ? `ตัน CO2e / ปี / คัน` : `ทั้งฝูง ${fleetSize} คัน ทั่วประเทศ`;
+      document.getElementById('stat-co2-fleet').innerText = `${co2TonsFleet.toFixed(1)} ตัน/ปี`;
+      document.getElementById('stat-trees').innerText = `~${treesPlanting.toLocaleString('en-US')} ต้น`;
+
+      document.getElementById('stat-payback').innerText = `${paybackBase.toFixed(2)} – ${paybackReserve.toFixed(2)} ปี`;
+      document.getElementById('stat-cft').innerText = `+${Math.round(netCashFlowYear).toLocaleString('en-US')} บ./ปี`;
+
+      // Update Middle Power Highlights
+      document.getElementById('disp-ebrake-stop').innerText = `${eStoredStopKwh.toFixed(2)} kWh`;
+      document.getElementById('disp-enet-trip').innerText = `${eNetTripKwh.toFixed(2)} kWh`;
+      document.getElementById('disp-range').innerText = `${rangeKm.toFixed(2)} กม.`;
+
+      // 7. Update SVG Diagram Animations & Elements according to Mode
+      updateSvgDiagram(pElecPeakKw, socPct, speedKmh);
+    }
+
+    function updateSvgDiagram(pElecPeakKw, socPct, speedKmh) {
+      const flowGensetBus = document.getElementById('flow-genset-bus');
+      const flowLtoConv = document.getElementById('flow-lto-conv');
+      const flowConvBus = document.getElementById('flow-conv-bus');
+      const flowBusMotor = document.getElementById('flow-bus-motor');
+      const gensetStatus = document.getElementById('svg-genset-status');
+      const ltoStatus = document.getElementById('svg-lto-status');
+      const convStatus = document.getElementById('svg-conv-status');
+      const motorStatus = document.getElementById('svg-motor-status');
+      const badgeStatus = document.getElementById('badge-mode-status');
+      const desc = document.getElementById('diagram-desc');
+
+      // Default clean slate classes
+      [flowGensetBus, flowLtoConv, flowConvBus, flowBusMotor].forEach(el => {
+        el.className.baseVal = "";
+      });
+
+      ltoStatus.textContent = `SOC: ${socPct.toFixed(0)}% (${(socPct * 4).toFixed(0)} kWh)`;
+
+      if (currentMode === 1) {
+        // Mode 1: Regenerative Braking
+        badgeStatus.className = "text-xs px-2.5 py-1 rounded-full font-bold bg-teal-500/20 text-teal-600 dark:text-teal-400";
+        badgeStatus.textContent = `กำลังเบรกพีค: ${pElecPeakKw.toFixed(1)} kW (ชาร์จเข้าแบต)`;
+        desc.textContent = "โหมด 1: มอเตอร์ทำหน้าที่เป็นเครื่องกำเนิดไฟฟ้า ส่งพลังงานผ่าน Inverter เข้า DC Bus และ Converter 2,000 kW ชาร์จตรงเข้าแบตเตอรี่ LTO (ไม่มีพลังงานสูญเปล่า)";
+
+        gensetStatus.textContent = "ดีเซล: STANDBY (0 kW)";
+        convStatus.textContent = `กำลังชาร์จ: ${Math.min(2000, pElecPeakKw).toFixed(0)} kW`;
+        motorStatus.textContent = `ปั่นไฟเบรก: ${pElecPeakKw.toFixed(0)} kW`;
+
+        // Reverse flows: Motor -> Bus -> Conv -> LTO
+        flowBusMotor.className.baseVal = "flow-reverse";
+        flowBusMotor.setAttribute('stroke', '#00A896');
+        flowConvBus.className.baseVal = "flow-reverse";
+        flowConvBus.setAttribute('stroke', '#00A896');
+        flowLtoConv.className.baseVal = "flow-reverse";
+        flowLtoConv.setAttribute('stroke', '#00A896');
+        flowGensetBus.setAttribute('stroke', '#94a3b8');
+
+      } else if (currentMode === 2) {
+        // Mode 2: Hybrid Heavy Boost
+        badgeStatus.className = "text-xs px-2.5 py-1 rounded-full font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400";
+        badgeStatus.textContent = "กำลังขับเคลื่อนรวม: 2,400 kW (เต็มพิกัด)";
+        desc.textContent = "โหมด 2: จังหวะออกตัวเร่งความเร็วหรือไต่เขา เครื่องยนต์ดีเซลเดินเครื่อง 2,000 kW ร่วมกับแบตเตอรี่ LTO จ่ายเสริม 400 kW รวมเป็น 2,400 kW ขับเคลื่อน 6 เพลาเต็มกำลัง";
+
+        gensetStatus.textContent = "ดีเซล: 2,000 kW (ขับหลัก)";
+        convStatus.textContent = "จ่ายเสริม: 400 kW (1C)";
+        motorStatus.textContent = "ขับเคลื่อน: 2,400 kW (6 เพลา)";
+
+        flowGensetBus.className.baseVal = "flow-active";
+        flowGensetBus.setAttribute('stroke', '#f59e0b');
+        flowLtoConv.className.baseVal = "flow-active";
+        flowLtoConv.setAttribute('stroke', '#3b82f6');
+        flowConvBus.className.baseVal = "flow-active";
+        flowConvBus.setAttribute('stroke', '#3b82f6');
+        flowBusMotor.className.baseVal = "flow-active";
+        flowBusMotor.setAttribute('stroke', '#ef4444');
+
+      } else if (currentMode === 3) {
+        // Mode 3: Cruising Mode
+        badgeStatus.className = "text-xs px-2.5 py-1 rounded-full font-bold bg-blue-500/20 text-blue-600 dark:text-blue-400";
+        badgeStatus.textContent = "โหมด Cruising: 2,000 kW ดีเซล + 400 kW แบต";
+        desc.textContent = "โหมด 3: ทางราบความเร็วคงที่ 55 km/h เครื่องยนต์ดีเซลทำงานที่จุด Sweet Spot (BSFC 205 g/kWh) แบ่งกำลังส่วนเกินชาร์จแบตเตอรี่เพื่อรักษาระดับ SOC 20-80%";
+
+        gensetStatus.textContent = "ดีเซล: 2,000 kW (Sweet Spot)";
+        convStatus.textContent = "ควบคุม SOC: ±200 kW";
+        motorStatus.textContent = `ขับเคลื่อน: ${(speedKmh > 50 ? 1200 : 700)} kW`;
+
+        flowGensetBus.className.baseVal = "flow-active";
+        flowGensetBus.setAttribute('stroke', '#f59e0b');
+        flowBusMotor.className.baseVal = "flow-active";
+        flowBusMotor.setAttribute('stroke', '#3b82f6');
+        flowConvBus.className.baseVal = "flow-reverse";
+        flowConvBus.setAttribute('stroke', '#00A896');
+        flowLtoConv.className.baseVal = "flow-reverse";
+        flowLtoConv.setAttribute('stroke', '#00A896');
+
+      } else if (currentMode === 4) {
+        // Mode 4: Pure Electric Yard Shunting
+        badgeStatus.className = "text-xs px-2.5 py-1 rounded-full font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400";
+        badgeStatus.textContent = "โหมดไฟฟ้าล้วน: ดับเครื่องยนต์ดีเซล 100%";
+        desc.textContent = "โหมด 4: สับเปลี่ยนขบวนรถในย่านสถานีกลางกรุงเทพอภิวัฒน์และเชียงใหม่ แบตเตอรี่ LTO จ่ายไฟ 200 kW ขับเคลื่อนเดี่ยว ไร้ควันดำ ไร้เสียงรบกวน 100% นานกว่า 3.5 ชม.";
+
+        gensetStatus.textContent = "ดีเซล: ดับสนิท 100% (0 kW)";
+        convStatus.textContent = "จ่ายไฟฟ้า: 200 kW (Pure EV)";
+        motorStatus.textContent = "สับเปลี่ยนย่าน: 200 kW";
+
+        flowGensetBus.setAttribute('stroke', '#94a3b8');
+        flowLtoConv.className.baseVal = "flow-active";
+        flowLtoConv.setAttribute('stroke', '#10b981');
+        flowConvBus.className.baseVal = "flow-active";
+        flowConvBus.setAttribute('stroke', '#10b981');
+        flowBusMotor.className.baseVal = "flow-active";
+        flowBusMotor.setAttribute('stroke', '#10b981');
+      }
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateAll();
+    });
+  </script>
+</body>
+</html>
